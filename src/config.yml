@@ -1,0 +1,24 @@
+welcome:
+  # The "message" config option specifies the exact text that players need to type in the chat
+  # to trigger the reward mechanism. This is intended to motivate players to welcome new players.
+  # Any message typed that matches this, ignoring case sensitivity, is considered a welcome message.
+  message: "welcome"
+
+  # The "timeThreshold" config option defines the time window (in milliseconds) in which a
+  # welcome message must be sent after a new player joins to be considered as valid. For example,
+  # a value of 15000 means that if a welcome message is sent within 15 seconds of a new player joining,
+  # it will trigger the reward process. This encourages prompt welcoming of new players.
+  timeThreshold: 15000
+
+  # The "rewardAmount" config option sets the amount of currency to be awarded to the player
+  # who sends a valid welcome message. This is how much in-game currency (Shekels) the welcoming
+  # player will receive. Adjusting this amount can help balance the economic impact of the reward
+  # within the game's economy.
+  rewardAmount: 1000.0
+
+  # The "rewardMessage" config option customizes the message sent to the player who successfully
+  # welcomes a new player. The message supports color codes (prefixed with &) and will replace
+  # the "%amount%" placeholder with the actual reward amount when displayed. This message is meant
+  # to provide immediate feedback to the welcoming player and can be customized to fit the server's
+  # theme or to offer additional instructions or thanks.
+  rewardMessage: "&aWow! You welcomed a new player! You are so nice, here is $%amount% Shekels!"
