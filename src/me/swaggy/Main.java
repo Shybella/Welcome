@@ -29,7 +29,7 @@ public class Main extends JavaPlugin implements Listener {
 
         // Read values from config
         welcomeMessage = getConfig().getString("welcome.message", "welcome").toLowerCase();
-        timeThreshold = getConfig().getLong("welcome.timeThreshold", 15000L);
+        timeThreshold = getConfig().getLong("welcome.timeThreshold", 60000L);
         rewardAmount = getConfig().getDouble("welcome.rewardAmount", 1000.0);
         rewardMessage = ChatColor.translateAlternateColorCodes('&', getConfig().getString("welcome.rewardMessage", "&aWow! You welcomed a new player! You are so nice, here is $%amount% Shekels!"));
 
@@ -66,18 +66,23 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         String message = event.getMessage().toLowerCase();
-        if (!message.equals(welcomeMessage)) return;
+        if (!message.contains(welcomeMessage)) return;
 
-        UUID uuid = event.getPlayer().getUniqueId();
-        newPlayers.entrySet().removeIf(entry -> {
-            if (System.currentTimeMillis() - entry.getValue() <= timeThreshold) {
-                if (econ.depositPlayer(Bukkit.getOfflinePlayer(uuid), rewardAmount).transactionSuccess()) {
+        long currentTime = System.currentTimeMillis();
+
+        // Iterate over newPlayers without removing them directly during the process
+        newPlayers.forEach((uuid, joinTime) -> {
+            // Check if the message is within the time threshold
+            if (currentTime - joinTime <= timeThreshold) {
+                // Reward the player who sent the message
+                UUID senderUuid = event.getPlayer().getUniqueId();
+                if (econ.depositPlayer(Bukkit.getOfflinePlayer(senderUuid), rewardAmount).transactionSuccess()) {
                     String formattedMessage = rewardMessage.replace("%amount%", String.format("%.2f", rewardAmount));
                     event.getPlayer().sendMessage(formattedMessage);
-                    return true; // Remove the player from the list
                 }
             }
-            return false;
         });
+
+        // Optionally, clean up the newPlayers map if needed, depending on additional requirements or conditions
     }
 }
